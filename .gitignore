@@ -1,0 +1,5 @@
+automate.sh
+build
+*.cmake
+*.txt
+
