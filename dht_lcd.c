@@ -30,8 +30,8 @@ int main() {
     char *label = NULL, *info = NULL;
 
     label = "Temp  | Humidity";
-    for (int j = 0; j < strlen(label); j++)
-        write_LCD(label[j]);
+    for (int i = 0; i < strlen(label); i++)
+        write_LCD(label[i]);
 
     info = (char*) malloc(16*sizeof(char));
     dht_reading reading;
@@ -44,8 +44,8 @@ int main() {
         fahr = (reading.temperature * 9 / 5) + 32;
         snprintf(info, 16*sizeof(char), "%.1fF | %.1f%%", fahr, reading.humidity);
         second_row();
-        for (int k = 0; k < strlen(info); k++) {
-            write_LCD(info[k]);
+        for (int i = 0; i < strlen(info); i++) {
+            write_LCD(info[i]);
         }
         sleep_ms(3000);
     }
