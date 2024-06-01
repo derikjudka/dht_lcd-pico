@@ -1,5 +1,3 @@
-automate.sh
-build
-*.cmake
-*.txt
-
+*.vscode
+build/
+pico-sdk/
