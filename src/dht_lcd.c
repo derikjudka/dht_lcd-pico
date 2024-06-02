@@ -27,8 +27,11 @@ struct lcd_config lcd = {
 };
 
 int main() {
+  // Initialize GPIO
   gpio_init(DHT_PIN);
   lcd_initialize_pins(&lcd);
+
+  // Initialize LCD display
   lcd_initialize_8_bit_interface(&lcd);
 
   char *label = "Temp  | Humidity";
