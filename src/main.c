@@ -15,8 +15,7 @@
 struct lcd_config lcd = {
     .rs = 0,
     .en = 1,
-    .data_bus = {2, 4, 6, 8, 10, 12, 14,
-                 15} // modify to match connected gpios on raspberry pi pico
+    .data_bus = {2, 4, 6, 8, 10, 12, 14, 15}
 };
 
 int main() {
