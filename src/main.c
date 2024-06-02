@@ -2,7 +2,6 @@
 #include "dht.h"
 #include "lcd_16x2.h"
 
-#include <pico/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
