@@ -30,14 +30,16 @@ endif()
 
 # Define the project executable and source files
 add_executable(${PROJ_NAME}
-    src/dht_lcd.c
-    src/lib/lcd_16x2.c
+    src/main.c
+    src/lib/dht/dht.c
+    src/lib/lcd/lcd_16x2.c
 )
 
 # Include the directories for header files
 target_include_directories(${PROJ_NAME} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src
-    ${CMAKE_CURRENT_LIST_DIR}/src/lib
+    ${CMAKE_CURRENT_LIST_DIR}/src/lib/dht
+    ${CMAKE_CURRENT_LIST_DIR}/src/lib/lcd
     ${PICO_SDK_PATH}
 )
 
