@@ -1,10 +1,10 @@
 #include "dht_lcd.h"
 #include "lcd_16x2.h"
 
+#include <pico/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pico/time.h>
 
 //#define USE_FAHR 1
 
@@ -14,8 +14,8 @@
 
 #define DHT11_XFER_BYTES 5
 
-#define SIGN_BIT_MASK   0x80
-#define TEMPERATURE_DEC_MASK  0x7F
+#define SIGN_BIT_MASK 0x80
+#define TEMPERATURE_DEC_MASK 0x7F
 
 #define DHT11_SLEEP_TIME_MS 1000
 
@@ -44,18 +44,18 @@ int main() {
     if (!dht11_read(sensor_read)) {
 
 #ifdef USE_FAHR
-        snprintf(info, LCD_NUM_COLUMN * sizeof(char), "%.1fF | %.1f%%",
-             celsius_to_fahrenheit(sensor_read->temperature),
-             sensor_read->humidity);
+      snprintf(info, LCD_NUM_COLUMN * sizeof(char), "%.1fF | %.1f%%",
+               celsius_to_fahrenheit(sensor_read->temperature),
+               sensor_read->humidity);
 #else
-        snprintf(info, LCD_NUM_COLUMN * sizeof(char), "%.1fC | %.1f%%",
-             sensor_read->temperature, sensor_read->humidity);
+      snprintf(info, LCD_NUM_COLUMN * sizeof(char), "%.1fC | %.1f%%",
+               sensor_read->temperature, sensor_read->humidity);
 #endif
 
-        lcd_goto_row2(&lcd);
-        for (int i = 0; i < strlen(info); i++) {
-            lcd_data(&lcd, (uint8_t *)&info[i]);
-        }
+      lcd_goto_row2(&lcd);
+      for (int i = 0; i < strlen(info); i++) {
+        lcd_data(&lcd, (uint8_t *)&info[i]);
+      }
     }
     sleep_ms(DHT11_SLEEP_TIME_MS);
   }
@@ -72,38 +72,39 @@ void host_start_signal() {
 }
 
 void dht11_ack_signals() {
-    while (gpio_get(DHT_PIN) == 0);
-    while (gpio_get(DHT_PIN) == 1);
+  while (gpio_get(DHT_PIN) == 0);
+  while (gpio_get(DHT_PIN) == 1);
 }
 
 int dht11_read(struct dht_reading *sensor_read) {
-    uint8_t data[DHT11_XFER_BYTES] = {0};
+  uint8_t data[DHT11_XFER_BYTES] = {0};
 
-    host_start_signal();
-    dht11_ack_signals();
+  host_start_signal();
+  dht11_ack_signals();
 
-    for (int i = 0; i < DHT11_XFER_BYTES * 8; i++) {
-        while (gpio_get(DHT_PIN) == 0); // wait for the start of the data bit
-        sleep_us(30);
-        if (gpio_get(DHT_PIN) == 1) {
-            data[i / 8] <<= 1;
-            data[i / 8] |= 1;
-            while (gpio_get(DHT_PIN) == 1); // wait for the end of data bit
-        } else {
-            data[i / 8] <<= 1;
-        }
+  for (int i = 0; i < DHT11_XFER_BYTES * 8; i++) {
+    while (gpio_get(DHT_PIN) == 0); // wait for the start of the data bit
+    sleep_us(30);
+    if (gpio_get(DHT_PIN) == 1) {
+      data[i / 8] <<= 1;
+      data[i / 8] |= 1;
+      while (gpio_get(DHT_PIN) == 1); // wait for the end of data bit
+    } else {
+      data[i / 8] <<= 1;
     }
+  }
 
-    if ((data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF))) {
-        sensor_read->humidity = data[0] + (data[1] * 0.1);
-        sensor_read->temperature = data[2] + ((data[3] & TEMPERATURE_DEC_MASK) * 0.1);
-        if (data[3] & SIGN_BIT_MASK)
-            sensor_read->temperature *= -1;
-        return 0;
-    }
-    else {
-        return -1;
-    }
+  if ((data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF))) {
+    sensor_read->humidity = data[0] + (data[1] * 0.1);
+    sensor_read->temperature =
+        data[2] + ((data[3] & TEMPERATURE_DEC_MASK) * 0.1);
+    if (data[3] & SIGN_BIT_MASK)
+      sensor_read->temperature *= -1;
+    return 0;
+  } else {
+    return -1;
+  }
 }
 
 float celsius_to_fahrenheit(float celsius) { return ((celsius * 9 / 5) + 32); }
+
